@@ -10,7 +10,7 @@
 
 @implementation YPCursorController
 
-- (id) init {
+- (id)init {
 	self = [super init];
 	if (self) {
 		[self setScreenHeight];
@@ -18,7 +18,7 @@
 	return self;
 }
 
-- (void) setScreenHeight {
+- (void)setScreenHeight {
 	
     NSRect screenRect;
     NSArray *screenArray = [NSScreen screens];
@@ -33,38 +33,53 @@
 	screenHeight = screenRect.size.height;
 }
 
-- (void) updateMouseLoc {
-	NSPoint mouseLoc;
-	mouseLoc = [NSEvent mouseLocation];
+/*
+ * Call this function before relying on p.x and p.y
+ */
+- (void)updateMouseLoc {
+	NSPoint mouseLoc = [NSEvent mouseLocation];
 	p.x = mouseLoc.x;
 	p.y = screenHeight - mouseLoc.y;
 }
 
-- (void) moveRight {
-    CGEventRef move = CGEventCreateMouseEvent(
-											   NULL, kCGEventMouseMoved,
-											   CGPointMake(p.x+GRID_SIZE, p.y),
-											   kCGMouseButtonLeft // ignored
-											   );
-	CGEventPost(kCGHIDEventTap, move);
-	CFRelease(move);
-
-	[self updateMouseLoc];
-}
-
-- (void) moveDown {
+- (void)moveToCoordWithX:(CGFloat)x Y:(CGFloat)y {
     CGEventRef move = CGEventCreateMouseEvent(
 											  NULL, kCGEventMouseMoved,
-											  CGPointMake(p.x, p.y+GRID_SIZE),
+											  CGPointMake(x, y),
 											  kCGMouseButtonLeft // ignored
 											  );
 	CGEventPost(kCGHIDEventTap, move);
 	CFRelease(move);
-	
+
 	[self updateMouseLoc];
 }
 
-- (void) click {
+- (void)moveRight {
+	[self updateMouseLoc];
+
+    CGEventRef move = CGEventCreateMouseEvent(
+											   NULL, kCGEventMouseMoved,
+											   CGPointMake(p.x+BLOCK_WIDTH, p.y),
+											   kCGMouseButtonLeft // ignored
+											   );
+	CGEventPost(kCGHIDEventTap, move);
+	CFRelease(move);
+}
+
+- (void)moveDown {
+	[self updateMouseLoc];
+
+    CGEventRef move = CGEventCreateMouseEvent(
+											  NULL, kCGEventMouseMoved,
+											  CGPointMake(p.x, p.y+BLOCK_WIDTH),
+											  kCGMouseButtonLeft // ignored
+											  );
+	CGEventPost(kCGHIDEventTap, move);
+	CFRelease(move);
+}
+
+- (void)click {
+	// Make sure p.x and p.y are up to date
 	[self updateMouseLoc];
 
 	CGEventRef click_down = CGEventCreateMouseEvent(
@@ -72,7 +87,6 @@
 													 CGPointMake(p.x, p.y),
 													 kCGMouseButtonLeft
 													 );
-	usleep(5000);
 
 	CGEventRef click_up = CGEventCreateMouseEvent(
 												   NULL, kCGEventLeftMouseUp,
@@ -81,41 +95,60 @@
 												   );
 
 	CGEventPost(kCGHIDEventTap, click_down);
+	usleep(10000);
 	CGEventPost(kCGHIDEventTap, click_up);
 
 	CFRelease(click_up);
 	CFRelease(click_down);
 }
 
-- (void) run {
+- (void)run {
 	[self updateMouseLoc];
-
+	
+	// Click to make window active
+	[self click];
+	usleep(WAIT_TIME*8);
+	
+	// Save starting position
 	NSPoint mouseLoc;
 	mouseLoc = [NSEvent mouseLocation];
-	startx = mouseLoc.x;
+	startX = mouseLoc.x;
+	startY = screenHeight - mouseLoc.y;
 
-    // Now, execute these events with an interval to make them noticeable
-	for (int i=0; i<GRID_LENGTH; i++) {
-		for (int j=0; j<GRID_LENGTH; j++) {
-			[self click];
+	// Make array of board co-ordinates
+	for (int i = 0; i < GRID_LENGTH; i++) {
+		CGFloat myX = startX;
+		CGFloat myY = startY;
+
+		for (int j = 0; j < GRID_LENGTH; j++) {
+			NSPoint myP;
+			myP.x = myX;
+			myP.y = myY;
+
+			board[i][j] = myP;
+
+			myX += BLOCK_WIDTH;
+		}
+
+		myY += BLOCK_WIDTH;
+	}
+
+
+	for (int ii=0; ii<1; ii++) {
+		for (int i=0; i<GRID_LENGTH; i++) {
+			for (int j=0; j<GRID_LENGTH; j++) {
+				[self click];
+				usleep(WAIT_TIME);
+				[self moveRight];
+				usleep(WAIT_TIME);
+			}
+			[self moveToCoordWithX:board[0][0].x Y:p.y];
 			usleep(WAIT_TIME);
-			[self moveRight];
+			[self moveDown];
 			usleep(WAIT_TIME);
 		}
-		NSLog(@"%f", startx);
-		p.x = startx;
-		[self moveDown];
-		usleep(WAIT_TIME);
+		[self moveToCoordWithX:board[0][0].x Y:board[0][0].y];
 	}
-	
-    //CGEventPost(kCGHIDEventTap, click1_down);
-    //CGEventPost(kCGHIDEventTap, click1_up);
-	
-    // Release the events
-    /*CFRelease(click1_up);
-    CFRelease(click1_down);
-    CFRelease(move2);
-    CFRelease(move1);*/
 }
 
 @end

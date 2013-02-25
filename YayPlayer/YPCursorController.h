@@ -8,15 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
-#define GRID_SIZE 40
+#define BLOCK_WIDTH 40
 #define GRID_LENGTH 8
-#define WAIT_TIME 100000
+#define WAIT_TIME 180000
 
 
 @interface YPCursorController : NSObject {
 	NSPoint p;
 	CGFloat screenHeight;
-	CGFloat startx;
+	CGFloat startX;
+	CGFloat startY;
+	NSPoint board[GRID_LENGTH][GRID_LENGTH];
 }
 
 - (void) run;

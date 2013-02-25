@@ -11,19 +11,21 @@
 
 #import "unistd.h"
 
+#import "YPCursorController.h"
+
 @interface YPAppDelegate : NSObject <NSApplicationDelegate> {
-	@private
-
-	/* displays[] Quartz display ID's */
-    CGDirectDisplayID *displays;
-
-	CGImageRef image;
-	NSImage *nsImage;
 }
+
+@property CGDirectDisplayID *displays;
+@property CGImageRef image;
+@property NSImage *nsImage;
+@property (nonatomic, nonatomic) YPCursorController *cursorController;
+
 
 //@property (assign) IBOutlet NSWindow *window;
 
-- (void) getDisplay;
+
+//- (void) getDisplay;
 - (IBAction)run:(id)sender;
 
 @end

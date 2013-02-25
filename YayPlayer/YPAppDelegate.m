@@ -9,6 +9,10 @@
 #import "YPAppDelegate.h"
 
 @implementation YPAppDelegate
+@synthesize displays = _displays;
+@synthesize image = _image;
+@synthesize nsImage = _nsImage;
+@synthesize cursorController = _cursorController;
 
 + (NSArray *)getRGBAsFromImage:(CGImageRef)imageRef atX:(int)xx andY:(int)yy count:(int)count
 {
@@ -48,20 +52,13 @@
 	return result;
 }
 
-+ (BOOL) pixelIsRed:(NSColor *)color
-{
-	if ([color redComponent] > [color greenComponent]
-		&& [color redComponent] > [color blueComponent]) {
-		return YES;
-	}
-
-	return NO;
-}
-
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
 	[self getDisplay];
-	image = CGDisplayCreateImage(displays[0]);
+	self.image = CGDisplayCreateImage(self.displays[0]);
+	
+	self.cursorController = [[YPCursorController alloc] init];
+	
 	//NSSize imSize = NSMakeSize(CGImageGetWidth(image), CGImageGetHeight(image));
 	//nsImage = [[NSImage alloc] initWithCGImage:image size:imSize];
 
@@ -98,12 +95,12 @@
         goto bail;
     }
 	
-    if (image == nil) {
+    if (self.image == nil) {
         goto bail;
     }
 	
     /* Set the image in the image destination to be our document image snapshot. */
-    CGImageDestinationAddImage(dest, image, NULL);
+    CGImageDestinationAddImage(dest, self.image, NULL);
 	
     /* Writes image data to the URL associated with the image destination. */
     status = CGImageDestinationFinalize(dest);
@@ -129,15 +126,15 @@ bail:
     }
     
     /* Maybe this isn't the first time though this function. */
-    if (displays != nil) {
-        free(displays);
+    if (self.displays != nil) {
+        free(self.displays);
     }
     
     /* Allocate enough memory to hold all the display IDs we have. */
-    displays = calloc((size_t)dspCount, sizeof(CGDirectDisplayID));
+    self.displays = calloc((size_t)dspCount, sizeof(CGDirectDisplayID));
     
     // Get the list of active displays
-    err = CGGetActiveDisplayList(dspCount, displays, &dspCount);
+    err = CGGetActiveDisplayList(dspCount, self.displays, &dspCount);
     
     /* More error-checking here. */
     if(err != CGDisplayNoErr)
@@ -147,48 +144,7 @@ bail:
     }
 }
 
-- (IBAction)run:(id)sender {	
-	// Move to 200x200
-    CGEventRef move1 = CGEventCreateMouseEvent(
-											   NULL, kCGEventMouseMoved,
-											   CGPointMake(200, 200),
-											   kCGMouseButtonLeft // ignored
-											   );
-    // Move to 250x250
-    CGEventRef move2 = CGEventCreateMouseEvent(
-											   NULL, kCGEventMouseMoved,
-											   CGPointMake(250, 250),
-											   kCGMouseButtonLeft // ignored
-											   );
-    // Left button down at 250x250
-    CGEventRef click1_down = CGEventCreateMouseEvent(
-													 NULL, kCGEventLeftMouseDown,
-													 CGPointMake(250, 250),
-													 kCGMouseButtonLeft
-													 );
-    // Left button up at 250x250
-    CGEventRef click1_up = CGEventCreateMouseEvent(
-												   NULL, kCGEventLeftMouseUp,
-												   CGPointMake(250, 250),
-												   kCGMouseButtonLeft
-												   );
-	
-    // Now, execute these events with an interval to make them noticeable
-	for (int i=0; i<10; i++) {
-		NSLog(@"Iteration: %d", i);
-		CGEventPost(kCGHIDEventTap, move1);
-		usleep(100000);
-		CGEventPost(kCGHIDEventTap, move2);
-		usleep(100000);
-	}
-
-    //CGEventPost(kCGHIDEventTap, click1_down);
-    //CGEventPost(kCGHIDEventTap, click1_up);
-	
-    // Release the events
-    CFRelease(click1_up);
-    CFRelease(click1_down);
-    CFRelease(move2);
-    CFRelease(move1);
+- (IBAction)run:(id)sender {
+	[self.cursorController run];
 }
 @end

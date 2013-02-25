@@ -12,6 +12,7 @@
 		24720E9C16D5D9850000C7AA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 24720E9B16D5D9850000C7AA /* main.m */; };
 		24720EA316D5D9850000C7AA /* YPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 24720EA216D5D9850000C7AA /* YPAppDelegate.m */; };
 		24720EA616D5D9850000C7AA /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 24720EA416D5D9850000C7AA /* MainMenu.xib */; };
+		24A9DF3116DAF7D7009B3455 /* YPCursorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 24A9DF3016DAF7D7009B3455 /* YPCursorController.m */; };
 		24D0181416D71B880065798D /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24D0181316D71B880065798D /* ApplicationServices.framework */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,8 @@
 		24720EA116D5D9850000C7AA /* YPAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YPAppDelegate.h; sourceTree = "<group>"; };
 		24720EA216D5D9850000C7AA /* YPAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YPAppDelegate.m; sourceTree = "<group>"; };
 		24720EA516D5D9850000C7AA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		24A9DF2F16DAF7D7009B3455 /* YPCursorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YPCursorController.h; sourceTree = "<group>"; };
+		24A9DF3016DAF7D7009B3455 /* YPCursorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YPCursorController.m; sourceTree = "<group>"; };
 		24D0181316D71B880065798D /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -86,6 +89,8 @@
 			children = (
 				24720EA116D5D9850000C7AA /* YPAppDelegate.h */,
 				24720EA216D5D9850000C7AA /* YPAppDelegate.m */,
+				24A9DF2F16DAF7D7009B3455 /* YPCursorController.h */,
+				24A9DF3016DAF7D7009B3455 /* YPCursorController.m */,
 				24720EA416D5D9850000C7AA /* MainMenu.xib */,
 				24720E9616D5D9850000C7AA /* Supporting Files */,
 			);
@@ -169,6 +174,7 @@
 			files = (
 				24720E9C16D5D9850000C7AA /* main.m in Sources */,
 				24720EA316D5D9850000C7AA /* YPAppDelegate.m in Sources */,
+				24A9DF3116DAF7D7009B3455 /* YPCursorController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
